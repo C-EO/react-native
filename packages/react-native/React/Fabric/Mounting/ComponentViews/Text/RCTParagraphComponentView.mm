@@ -105,7 +105,7 @@ using namespace facebook::react;
 
 - (void)updateState:(const State::Shared &)state oldState:(const State::Shared &)oldState
 {
-  _state = std::static_pointer_cast<ParagraphShadowNode::ConcreteState const>(state);
+  _state = std::static_pointer_cast<const ParagraphShadowNode::ConcreteState>(state);
   [self setNeedsDisplay];
 }
 
@@ -156,6 +156,10 @@ using namespace facebook::react;
 
 - (NSString *)accessibilityLabel
 {
+  NSString *label = super.accessibilityLabel;
+  if ([label length] > 0) {
+    return label;
+  }
   return self.attributedText.string;
 }
 

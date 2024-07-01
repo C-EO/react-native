@@ -7,12 +7,12 @@
 
 #include "UIManagerBinding.h"
 
+#include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
 #include <jsi/JSIDynamic.h>
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/components/view/PointerEvent.h>
 #include <react/renderer/core/LayoutableShadowNode.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include <react/renderer/dom/DOM.h>
 #include <react/renderer/runtimescheduler/RuntimeSchedulerBinding.h>
 #include <react/renderer/uimanager/primitives.h>
@@ -141,22 +141,23 @@ void UIManagerBinding::dispatchEventToJS(
     return;
   }
 
-  auto instanceHandle = eventTarget != nullptr
-    ? [&]() {
-      auto instanceHandle = eventTarget->getInstanceHandle(runtime);
-      if (instanceHandle.isUndefined()) {
-        return jsi::Value::null();
-      }
+  auto instanceHandle = eventTarget != nullptr ? [&]() {
+    auto instanceHandle = eventTarget->getInstanceHandle(runtime);
+    if (instanceHandle.isUndefined()) {
+      return jsi::Value::null();
+    }
 
-      // Mixing `target` into `payload`.
-      if (!payload.isObject()) {
-        LOG(ERROR) << "payload for dispatchEvent is not an object: " << eventTarget->getTag();
-      }
-      react_native_assert(payload.isObject());
-      payload.asObject(runtime).setProperty(runtime, "target", eventTarget->getTag());
-      return instanceHandle;
-    }()
-    : jsi::Value::null();
+    // Mixing `target` into `payload`.
+    if (!payload.isObject()) {
+      LOG(ERROR) << "payload for dispatchEvent is not an object: "
+                 << eventTarget->getTag();
+    }
+    react_native_assert(payload.isObject());
+    payload.asObject(runtime).setProperty(
+        runtime, "target", eventTarget->getTag());
+    return instanceHandle;
+  }()
+                                               : jsi::Value::null();
 
   if (instanceHandle.isNull()) {
     // Do not log all missing instanceHandles to avoid log spam
@@ -255,7 +256,8 @@ jsi::Value UIManagerBinding::get(
                     stringFromValue(runtime, arguments[1]),
                     surfaceIdFromValue(runtime, arguments[2]),
                     RawProps(runtime, arguments[3]),
-                    std::move(instanceHandle)));
+                    std::move(instanceHandle)),
+                true);
           } catch (const std::logic_error& ex) {
             LOG(FATAL) << "logic_error in createNode: " << ex.what();
           }
@@ -281,7 +283,8 @@ jsi::Value UIManagerBinding::get(
               uiManager->cloneNode(
                   *shadowNodeFromValue(runtime, arguments[0]),
                   nullptr,
-                  RawProps()));
+                  RawProps()),
+              true);
         });
   }
 
@@ -368,7 +371,8 @@ jsi::Value UIManagerBinding::get(
                   *shadowNodeFromValue(runtime, arguments[0]),
                   count > 1 ? shadowNodeListFromValue(runtime, arguments[1])
                             : ShadowNode::emptySharedShadowNodeSharedList(),
-                  RawProps()));
+                  RawProps()),
+              true);
         });
   }
 
@@ -391,7 +395,8 @@ jsi::Value UIManagerBinding::get(
               uiManager->cloneNode(
                   *shadowNodeFromValue(runtime, arguments[0]),
                   nullptr,
-                  RawProps(runtime, arguments[1])));
+                  RawProps(runtime, arguments[1])),
+              true);
         });
   }
 
@@ -419,7 +424,8 @@ jsi::Value UIManagerBinding::get(
                   hasChildrenArg
                       ? shadowNodeListFromValue(runtime, arguments[1])
                       : ShadowNode::emptySharedShadowNodeSharedList(),
-                  RawProps(runtime, arguments[hasChildrenArg ? 2 : 1])));
+                  RawProps(runtime, arguments[hasChildrenArg ? 2 : 1])),
+              true);
         });
   }
 
@@ -526,9 +532,9 @@ jsi::Value UIManagerBinding::get(
                     strongUIManager->completeSurface(
                         surfaceId,
                         shadowNodeList,
-                        {/* .enableStateReconciliation = */ true,
-                         /* .mountSynchronously = */ false,
-                         /* .shouldYield = */ shouldYield});
+                        {.enableStateReconciliation = true,
+                         .mountSynchronously = false,
+                         .shouldYield = shouldYield});
                   }
                 });
           } else {

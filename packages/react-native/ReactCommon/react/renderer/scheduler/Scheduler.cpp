@@ -10,12 +10,12 @@
 #include <glog/logging.h>
 #include <jsi/jsi.h>
 
+#include <cxxreact/SystraceSection.h>
 #include <react/debug/react_native_assert.h>
 #include <react/featureflags/ReactNativeFeatureFlags.h>
 #include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
 #include <react/renderer/core/EventQueueProcessor.h>
 #include <react/renderer/core/LayoutContext.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include <react/renderer/mounting/MountingOverrideDelegate.h>
 #include <react/renderer/mounting/ShadowViewMutation.h>
 #include <react/renderer/runtimescheduler/RuntimeScheduler.h>
@@ -75,7 +75,7 @@ Scheduler::Scheduler(
                        ReactEventPriority priority,
                        const EventPayload& payload) {
     uiManager->visitBinding(
-        [&](UIManagerBinding const& uiManagerBinding) {
+        [&](const UIManagerBinding& uiManagerBinding) {
           uiManagerBinding.dispatchEvent(
               runtime, eventTarget, type, priority, payload);
         },
@@ -150,10 +150,6 @@ Scheduler::Scheduler(
   removeOutstandingSurfacesOnDestruction_ = reactNativeConfig_->getBool(
       "react_fabric:remove_outstanding_surfaces_on_destruction_ios");
 #endif
-
-  CoreFeatures::enableGranularShadowTreeStateReconciliation =
-      reactNativeConfig_->getBool(
-          "react_fabric:enable_granular_shadow_tree_state_reconciliation");
 
   CoreFeatures::enableReportEventPaintTime = reactNativeConfig_->getBool(
       "rn_responsiveness_performance:enable_paint_time_reporting");
@@ -291,6 +287,10 @@ void Scheduler::uiManagerDidFinishTransaction(
   SystraceSection s("Scheduler::uiManagerDidFinishTransaction");
 
   if (delegate_ != nullptr) {
+    // This is no-op on all platforms except for Android where we need to
+    // observe each transaction to be able to mount correctly.
+    delegate_->schedulerDidFinishTransaction(mountingCoordinator);
+
     auto weakRuntimeScheduler =
         contextContainer_->find<std::weak_ptr<RuntimeScheduler>>(
             "RuntimeScheduler");
@@ -301,19 +301,17 @@ void Scheduler::uiManagerDidFinishTransaction(
       runtimeScheduler->scheduleRenderingUpdate(
           [delegate = delegate_,
            mountingCoordinator = std::move(mountingCoordinator)]() {
-            delegate->schedulerDidFinishTransaction(mountingCoordinator);
+            delegate->schedulerShouldRenderTransactions(mountingCoordinator);
           });
     } else {
-      delegate_->schedulerDidFinishTransaction(mountingCoordinator);
+      delegate_->schedulerShouldRenderTransactions(mountingCoordinator);
     }
   }
 }
-void Scheduler::uiManagerDidCreateShadowNode(const ShadowNode& shadowNode) {
-  SystraceSection s("Scheduler::uiManagerDidCreateShadowNode");
 
+void Scheduler::uiManagerDidCreateShadowNode(const ShadowNode& shadowNode) {
   if (delegate_ != nullptr) {
-    delegate_->schedulerDidRequestPreliminaryViewAllocation(
-        shadowNode.getSurfaceId(), shadowNode);
+    delegate_->schedulerDidRequestPreliminaryViewAllocation(shadowNode);
   }
 }
 
@@ -366,9 +364,9 @@ std::shared_ptr<UIManager> Scheduler::getUIManager() const {
 }
 
 void Scheduler::addEventListener(
-    const std::shared_ptr<const EventListener>& listener) {
+    std::shared_ptr<const EventListener> listener) {
   if (eventDispatcher_->has_value()) {
-    eventDispatcher_->value().addListener(listener);
+    eventDispatcher_->value().addListener(std::move(listener));
   }
 }
 

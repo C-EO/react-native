@@ -49,7 +49,7 @@ class DummyShadowTreeDelegate : public ShadowTreeDelegate {
 
   void shadowTreeDidFinishTransaction(
       MountingCoordinator::Shared mountingCoordinator,
-      bool mountSynchronously) const override{};
+      bool mountSynchronously) const override {};
 };
 
 namespace {
@@ -83,6 +83,7 @@ class StateReconciliationTest : public ::testing::TestWithParam<bool> {
   StateReconciliationTest() : builder_(simpleComponentBuilder()) {}
 
   void SetUp() override {
+    ReactNativeFeatureFlags::dangerouslyReset();
     ReactNativeFeatureFlags::override(
         std::make_unique<StateReconciliationTestFeatureFlags>(GetParam()));
   }

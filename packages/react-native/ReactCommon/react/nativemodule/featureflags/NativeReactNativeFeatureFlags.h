@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<7a2a41f80549322a7f4255d193dc0b7b>>
+ * @generated SignedSource<<6b8504e42d72611f4d4b6606d69c42aa>>
  */
 
 /**
@@ -37,33 +37,51 @@ class NativeReactNativeFeatureFlags
 
   bool commonTestFlag(jsi::Runtime& runtime);
 
+  bool allowCollapsableChildren(jsi::Runtime& runtime);
+
+  bool allowRecursiveCommitsWithSynchronousMountOnAndroid(jsi::Runtime& runtime);
+
   bool batchRenderingUpdatesInEventLoop(jsi::Runtime& runtime);
+
+  bool destroyFabricSurfacesInReactInstanceManager(jsi::Runtime& runtime);
 
   bool enableBackgroundExecutor(jsi::Runtime& runtime);
 
   bool enableCleanTextInputYogaNode(jsi::Runtime& runtime);
 
-  bool enableCustomDrawOrderFabric(jsi::Runtime& runtime);
+  bool enableGranularShadowTreeStateReconciliation(jsi::Runtime& runtime);
 
   bool enableMicrotasks(jsi::Runtime& runtime);
-
-  bool enableMountHooksAndroid(jsi::Runtime& runtime);
-
-  bool enableSpannableBuildingUnification(jsi::Runtime& runtime);
 
   bool enableSynchronousStateUpdates(jsi::Runtime& runtime);
 
   bool enableUIConsistency(jsi::Runtime& runtime);
 
+  bool fixMappingOfEventPrioritiesBetweenFabricAndReact(jsi::Runtime& runtime);
+
+  bool fixStoppedSurfaceRemoveDeleteTreeUIFrameCallbackLeak(jsi::Runtime& runtime);
+
   bool forceBatchingMountItemsOnAndroid(jsi::Runtime& runtime);
 
-  bool inspectorEnableCxxInspectorPackagerConnection(jsi::Runtime& runtime);
+  bool fuseboxEnabledDebug(jsi::Runtime& runtime);
 
-  bool inspectorEnableModernCDPRegistry(jsi::Runtime& runtime);
+  bool fuseboxEnabledRelease(jsi::Runtime& runtime);
+
+  bool lazyAnimationCallbacks(jsi::Runtime& runtime);
+
+  bool preventDoubleTextMeasure(jsi::Runtime& runtime);
+
+  bool setAndroidLayoutDirection(jsi::Runtime& runtime);
+
+  bool useImmediateExecutorInAndroidBridgeless(jsi::Runtime& runtime);
 
   bool useModernRuntimeScheduler(jsi::Runtime& runtime);
 
   bool useNativeViewConfigsInBridgelessMode(jsi::Runtime& runtime);
+
+  bool useRuntimeShadowNodeReferenceUpdate(jsi::Runtime& runtime);
+
+  bool useRuntimeShadowNodeReferenceUpdateOnLayout(jsi::Runtime& runtime);
 
   bool useStateAlignmentMechanism(jsi::Runtime& runtime);
 };

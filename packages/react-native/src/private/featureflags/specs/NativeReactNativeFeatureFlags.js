@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<99ddb55dadff7adfb02c105984d47cbf>>
+ * @generated SignedSource<<6715ba4954b31464c591597c53a2a0de>>
  * @flow strict-local
  */
 
@@ -24,20 +24,29 @@ import * as TurboModuleRegistry from '../../../../Libraries/TurboModule/TurboMod
 
 export interface Spec extends TurboModule {
   +commonTestFlag?: () => boolean;
+  +allowCollapsableChildren?: () => boolean;
+  +allowRecursiveCommitsWithSynchronousMountOnAndroid?: () => boolean;
   +batchRenderingUpdatesInEventLoop?: () => boolean;
+  +destroyFabricSurfacesInReactInstanceManager?: () => boolean;
   +enableBackgroundExecutor?: () => boolean;
   +enableCleanTextInputYogaNode?: () => boolean;
-  +enableCustomDrawOrderFabric?: () => boolean;
+  +enableGranularShadowTreeStateReconciliation?: () => boolean;
   +enableMicrotasks?: () => boolean;
-  +enableMountHooksAndroid?: () => boolean;
-  +enableSpannableBuildingUnification?: () => boolean;
   +enableSynchronousStateUpdates?: () => boolean;
   +enableUIConsistency?: () => boolean;
+  +fixMappingOfEventPrioritiesBetweenFabricAndReact?: () => boolean;
+  +fixStoppedSurfaceRemoveDeleteTreeUIFrameCallbackLeak?: () => boolean;
   +forceBatchingMountItemsOnAndroid?: () => boolean;
-  +inspectorEnableCxxInspectorPackagerConnection?: () => boolean;
-  +inspectorEnableModernCDPRegistry?: () => boolean;
+  +fuseboxEnabledDebug?: () => boolean;
+  +fuseboxEnabledRelease?: () => boolean;
+  +lazyAnimationCallbacks?: () => boolean;
+  +preventDoubleTextMeasure?: () => boolean;
+  +setAndroidLayoutDirection?: () => boolean;
+  +useImmediateExecutorInAndroidBridgeless?: () => boolean;
   +useModernRuntimeScheduler?: () => boolean;
   +useNativeViewConfigsInBridgelessMode?: () => boolean;
+  +useRuntimeShadowNodeReferenceUpdate?: () => boolean;
+  +useRuntimeShadowNodeReferenceUpdateOnLayout?: () => boolean;
   +useStateAlignmentMechanism?: () => boolean;
 }
 

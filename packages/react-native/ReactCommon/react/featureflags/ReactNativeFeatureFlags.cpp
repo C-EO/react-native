@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<ddb65722ccc0d584d105b07a621e6871>>
+ * @generated SignedSource<<dd5872a21f84a41bea247e137541ddfc>>
  */
 
 /**
@@ -25,8 +25,20 @@ bool ReactNativeFeatureFlags::commonTestFlag() {
   return getAccessor().commonTestFlag();
 }
 
+bool ReactNativeFeatureFlags::allowCollapsableChildren() {
+  return getAccessor().allowCollapsableChildren();
+}
+
+bool ReactNativeFeatureFlags::allowRecursiveCommitsWithSynchronousMountOnAndroid() {
+  return getAccessor().allowRecursiveCommitsWithSynchronousMountOnAndroid();
+}
+
 bool ReactNativeFeatureFlags::batchRenderingUpdatesInEventLoop() {
   return getAccessor().batchRenderingUpdatesInEventLoop();
+}
+
+bool ReactNativeFeatureFlags::destroyFabricSurfacesInReactInstanceManager() {
+  return getAccessor().destroyFabricSurfacesInReactInstanceManager();
 }
 
 bool ReactNativeFeatureFlags::enableBackgroundExecutor() {
@@ -37,20 +49,12 @@ bool ReactNativeFeatureFlags::enableCleanTextInputYogaNode() {
   return getAccessor().enableCleanTextInputYogaNode();
 }
 
-bool ReactNativeFeatureFlags::enableCustomDrawOrderFabric() {
-  return getAccessor().enableCustomDrawOrderFabric();
+bool ReactNativeFeatureFlags::enableGranularShadowTreeStateReconciliation() {
+  return getAccessor().enableGranularShadowTreeStateReconciliation();
 }
 
 bool ReactNativeFeatureFlags::enableMicrotasks() {
   return getAccessor().enableMicrotasks();
-}
-
-bool ReactNativeFeatureFlags::enableMountHooksAndroid() {
-  return getAccessor().enableMountHooksAndroid();
-}
-
-bool ReactNativeFeatureFlags::enableSpannableBuildingUnification() {
-  return getAccessor().enableSpannableBuildingUnification();
 }
 
 bool ReactNativeFeatureFlags::enableSynchronousStateUpdates() {
@@ -61,16 +65,40 @@ bool ReactNativeFeatureFlags::enableUIConsistency() {
   return getAccessor().enableUIConsistency();
 }
 
+bool ReactNativeFeatureFlags::fixMappingOfEventPrioritiesBetweenFabricAndReact() {
+  return getAccessor().fixMappingOfEventPrioritiesBetweenFabricAndReact();
+}
+
+bool ReactNativeFeatureFlags::fixStoppedSurfaceRemoveDeleteTreeUIFrameCallbackLeak() {
+  return getAccessor().fixStoppedSurfaceRemoveDeleteTreeUIFrameCallbackLeak();
+}
+
 bool ReactNativeFeatureFlags::forceBatchingMountItemsOnAndroid() {
   return getAccessor().forceBatchingMountItemsOnAndroid();
 }
 
-bool ReactNativeFeatureFlags::inspectorEnableCxxInspectorPackagerConnection() {
-  return getAccessor().inspectorEnableCxxInspectorPackagerConnection();
+bool ReactNativeFeatureFlags::fuseboxEnabledDebug() {
+  return getAccessor().fuseboxEnabledDebug();
 }
 
-bool ReactNativeFeatureFlags::inspectorEnableModernCDPRegistry() {
-  return getAccessor().inspectorEnableModernCDPRegistry();
+bool ReactNativeFeatureFlags::fuseboxEnabledRelease() {
+  return getAccessor().fuseboxEnabledRelease();
+}
+
+bool ReactNativeFeatureFlags::lazyAnimationCallbacks() {
+  return getAccessor().lazyAnimationCallbacks();
+}
+
+bool ReactNativeFeatureFlags::preventDoubleTextMeasure() {
+  return getAccessor().preventDoubleTextMeasure();
+}
+
+bool ReactNativeFeatureFlags::setAndroidLayoutDirection() {
+  return getAccessor().setAndroidLayoutDirection();
+}
+
+bool ReactNativeFeatureFlags::useImmediateExecutorInAndroidBridgeless() {
+  return getAccessor().useImmediateExecutorInAndroidBridgeless();
 }
 
 bool ReactNativeFeatureFlags::useModernRuntimeScheduler() {
@@ -79,6 +107,14 @@ bool ReactNativeFeatureFlags::useModernRuntimeScheduler() {
 
 bool ReactNativeFeatureFlags::useNativeViewConfigsInBridgelessMode() {
   return getAccessor().useNativeViewConfigsInBridgelessMode();
+}
+
+bool ReactNativeFeatureFlags::useRuntimeShadowNodeReferenceUpdate() {
+  return getAccessor().useRuntimeShadowNodeReferenceUpdate();
+}
+
+bool ReactNativeFeatureFlags::useRuntimeShadowNodeReferenceUpdateOnLayout() {
+  return getAccessor().useRuntimeShadowNodeReferenceUpdateOnLayout();
 }
 
 bool ReactNativeFeatureFlags::useStateAlignmentMechanism() {

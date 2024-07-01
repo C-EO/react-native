@@ -13,6 +13,7 @@
 @protocol RCTComponentViewFactoryComponentProvider;
 @protocol RCTTurboModuleManagerDelegate;
 @class RCTBridge;
+@class RCTHost;
 @class RCTRootView;
 @class RCTSurfacePresenterBridgeAdapter;
 
@@ -23,11 +24,19 @@ typedef UIView *_Nonnull (
     ^RCTCreateRootViewWithBridgeBlock)(RCTBridge *bridge, NSString *moduleName, NSDictionary *initProps);
 typedef RCTBridge *_Nonnull (
     ^RCTCreateBridgeWithDelegateBlock)(id<RCTBridgeDelegate> delegate, NSDictionary *launchOptions);
+typedef void (^RCTCustomizeRootViewBlock)(UIView *rootView);
 typedef NSURL *_Nullable (^RCTSourceURLForBridgeBlock)(RCTBridge *bridge);
 typedef NSURL *_Nullable (^RCTBundleURLBlock)(void);
 typedef NSArray<id<RCTBridgeModule>> *_Nonnull (^RCTExtraModulesForBridgeBlock)(RCTBridge *bridge);
 typedef NSDictionary<NSString *, Class> *_Nonnull (^RCTExtraLazyModuleClassesForBridge)(RCTBridge *bridge);
 typedef BOOL (^RCTBridgeDidNotFindModuleBlock)(RCTBridge *bridge, NSString *moduleName);
+typedef void (^RCTHostDidStartBlock)(RCTHost *host);
+typedef void (^RCTHostDidReceiveJSErrorStackBlock)(
+    RCTHost *host,
+    NSArray<NSDictionary<NSString *, id> *> *stack,
+    NSString *message,
+    NSUInteger exceptionId,
+    BOOL isFatal);
 
 #pragma mark - RCTRootViewFactory Configuration
 @interface RCTRootViewFactoryConfiguration : NSObject
@@ -91,6 +100,13 @@ typedef BOOL (^RCTBridgeDidNotFindModuleBlock)(RCTBridge *bridge, NSString *modu
  */
 @property (nonatomic, nullable) RCTCreateBridgeWithDelegateBlock createBridgeWithDelegate;
 
+/**
+ * Block that allows to customize the rootView that is passed to React Native.
+ *
+ * @parameter: rootView - The root view to customize.
+ */
+@property (nonatomic, nullable) RCTCustomizeRootViewBlock customizeRootView;
+
 #pragma mark - RCTBridgeDelegate blocks
 
 /**
@@ -131,6 +147,22 @@ typedef BOOL (^RCTBridgeDidNotFindModuleBlock)(RCTBridge *bridge, NSString *modu
  */
 @property (nonatomic, nullable) RCTBridgeDidNotFindModuleBlock bridgeDidNotFindModule;
 
+/**
+ * Called when `RCTHost` started.
+ * @parameter: host - The started `RCTHost`.
+ */
+@property (nonatomic, nullable) RCTHostDidStartBlock hostDidStartBlock;
+
+/**
+ * Called when `RCTHost` received JS error.
+ * @parameter: host - `RCTHost` which received js error.
+ * @parameter: stack - JS error stack.
+ * @parameter: message - Error message.
+ * @parameter: exceptionId - Exception ID.
+ * @parameter: isFatal - YES if JS error is fatal.
+ */
+@property (nonatomic, nullable) RCTHostDidReceiveJSErrorStackBlock hostDidReceiveJSErrorStackBlock;
+
 @end
 
 #pragma mark - RCTRootViewFactory
@@ -147,6 +179,7 @@ typedef BOOL (^RCTBridgeDidNotFindModuleBlock)(RCTBridge *bridge, NSString *modu
 @interface RCTRootViewFactory : NSObject
 
 @property (nonatomic, strong, nullable) RCTBridge *bridge;
+@property (nonatomic, strong, nullable) RCTHost *reactHost;
 @property (nonatomic, strong, nullable) RCTSurfacePresenterBridgeAdapter *bridgeAdapter;
 
 - (instancetype)initWithConfiguration:(RCTRootViewFactoryConfiguration *)configuration
@@ -169,6 +202,10 @@ typedef BOOL (^RCTBridgeDidNotFindModuleBlock)(RCTBridge *bridge, NSString *modu
                      initialProperties:(NSDictionary *__nullable)initialProperties;
 
 - (UIView *_Nonnull)viewWithModuleName:(NSString *)moduleName;
+
+#pragma mark - RCTRootViewFactory Helpers
+
+- (RCTHost *)createReactHost:(NSDictionary *__nullable)launchOptions;
 
 @end
 

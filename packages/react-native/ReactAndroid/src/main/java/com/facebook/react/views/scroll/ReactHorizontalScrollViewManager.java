@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
+import com.facebook.infer.annotation.Nullsafe;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.RetryableMountingLayerException;
@@ -36,6 +37,7 @@ import java.util.List;
  * <p>Note that {@link ReactScrollView} and {@link ReactHorizontalScrollView} are exposed to JS as a
  * single ScrollView component, configured via the {@code horizontal} boolean property.
  */
+@Nullsafe(Nullsafe.Mode.LOCAL)
 @ReactModule(name = ReactHorizontalScrollViewManager.REACT_CLASS)
 public class ReactHorizontalScrollViewManager extends ViewGroupManager<ReactHorizontalScrollView>
     implements ReactScrollViewCommandHelper.ScrollCommandHandler<ReactHorizontalScrollView> {
@@ -67,7 +69,7 @@ public class ReactHorizontalScrollViewManager extends ViewGroupManager<ReactHori
   }
 
   @Override
-  public Object updateState(
+  public @Nullable Object updateState(
       ReactHorizontalScrollView view, ReactStylesDiffMap props, StateWrapper stateWrapper) {
     view.setStateWrapper(stateWrapper);
     return null;
@@ -86,6 +88,11 @@ public class ReactHorizontalScrollViewManager extends ViewGroupManager<ReactHori
   @ReactProp(name = "decelerationRate")
   public void setDecelerationRate(ReactHorizontalScrollView view, float decelerationRate) {
     view.setDecelerationRate(decelerationRate);
+  }
+
+  @ReactProp(name = "enableSyncOnScroll")
+  public void setEnableSyncOnScroll(ReactHorizontalScrollView view, boolean enableSyncOnScroll) {
+    view.setEnableSyncOnScroll(enableSyncOnScroll);
   }
 
   @ReactProp(name = "disableIntervalMomentum")
@@ -248,9 +255,9 @@ public class ReactHorizontalScrollViewManager extends ViewGroupManager<ReactHori
         ViewProps.BORDER_BOTTOM_RIGHT_RADIUS,
         ViewProps.BORDER_BOTTOM_LEFT_RADIUS
       },
-      defaultFloat = YogaConstants.UNDEFINED)
+      defaultFloat = Float.NaN)
   public void setBorderRadius(ReactHorizontalScrollView view, int index, float borderRadius) {
-    if (!YogaConstants.isUndefined(borderRadius)) {
+    if (!Float.isNaN(borderRadius)) {
       borderRadius = PixelUtil.toPixelFromDIP(borderRadius);
     }
 
@@ -274,9 +281,9 @@ public class ReactHorizontalScrollViewManager extends ViewGroupManager<ReactHori
         ViewProps.BORDER_TOP_WIDTH,
         ViewProps.BORDER_BOTTOM_WIDTH,
       },
-      defaultFloat = YogaConstants.UNDEFINED)
+      defaultFloat = Float.NaN)
   public void setBorderWidth(ReactHorizontalScrollView view, int index, float width) {
-    if (!YogaConstants.isUndefined(width)) {
+    if (!Float.isNaN(width)) {
       width = PixelUtil.toPixelFromDIP(width);
     }
     view.setBorderWidth(SPACING_TYPES[index], width);
@@ -348,5 +355,10 @@ public class ReactHorizontalScrollViewManager extends ViewGroupManager<ReactHori
   @ReactProp(name = "scrollEventThrottle")
   public void setScrollEventThrottle(ReactHorizontalScrollView view, int scrollEventThrottle) {
     view.setScrollEventThrottle(scrollEventThrottle);
+  }
+
+  @ReactProp(name = "horizontal")
+  public void setHorizontal(ReactHorizontalScrollView view, boolean horizontal) {
+    // Do Nothing: Align with static ViewConfigs
   }
 }

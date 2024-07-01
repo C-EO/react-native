@@ -262,6 +262,11 @@ const APIs: Array<RNTesterModuleInfo> = ([
     module: require('../examples/PanResponder/PanResponderExample'),
   },
   {
+    key: 'PixelRatio',
+    category: 'UI',
+    module: require('../examples/PixelRatio/PixelRatioExample'),
+  },
+  {
     key: 'PermissionsExampleAndroid',
     category: 'Android',
     module: require('../examples/PermissionsAndroid/PermissionsExample'),
@@ -300,6 +305,11 @@ const APIs: Array<RNTesterModuleInfo> = ([
     key: 'TransformExample',
     category: 'UI',
     module: require('../examples/Transform/TransformExample'),
+  },
+  {
+    key: 'FilterExample',
+    category: 'UI',
+    module: require('../examples/Filter/FilterExample'),
   },
   {
     key: 'VibrationExample',

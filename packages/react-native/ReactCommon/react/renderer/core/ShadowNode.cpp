@@ -10,6 +10,7 @@
 #include "ShadowNodeFragment.h"
 
 #include <react/debug/react_native_assert.h>
+#include <react/featureflags/ReactNativeFeatureFlags.h>
 #include <react/renderer/core/ComponentDescriptor.h>
 #include <react/renderer/core/ShadowNodeFragment.h>
 #include <react/renderer/debug/DebugStringConvertible.h>
@@ -287,12 +288,13 @@ void ShadowNode::setMounted(bool mounted) const {
   family_->eventEmitter_->setEnabled(mounted);
 }
 
-bool ShadowNode::getHasBeenMounted() const {
-  return hasBeenMounted_;
+bool ShadowNode::getHasBeenPromoted() const {
+  return hasBeenMounted_.load();
 }
 
 bool ShadowNode::progressStateIfNecessary() {
-  if (!hasBeenMounted_ && state_) {
+  auto hasBeenPromoted = hasBeenMounted_.load();
+  if (!hasBeenPromoted && state_) {
     ensureUnsealed();
     auto mostRecentState = family_->getMostRecentStateIfObsolete(*state_);
     if (mostRecentState) {
@@ -307,13 +309,37 @@ bool ShadowNode::progressStateIfNecessary() {
   return false;
 }
 
+void ShadowNode::setRuntimeShadowNodeReference(
+    ShadowNodeWrapper* runtimeShadowNodeReference) const {
+  runtimeShadowNodeReference_ = runtimeShadowNodeReference;
+}
+
+void ShadowNode::transferRuntimeShadowNodeReference(
+    const Shared& destinationShadowNode) const {
+  destinationShadowNode->runtimeShadowNodeReference_ =
+      runtimeShadowNodeReference_;
+
+  if (runtimeShadowNodeReference_ != nullptr) {
+    runtimeShadowNodeReference_->shadowNode = destinationShadowNode;
+  }
+}
+
+void ShadowNode::transferRuntimeShadowNodeReference(
+    const Shared& destinationShadowNode,
+    const ShadowNodeFragment& fragment) const {
+  if (fragment.runtimeShadowNodeReference &&
+      ReactNativeFeatureFlags::useRuntimeShadowNodeReferenceUpdate()) {
+    transferRuntimeShadowNodeReference(destinationShadowNode);
+  }
+}
+
 const ShadowNodeFamily& ShadowNode::getFamily() const {
   return *family_;
 }
 
 ShadowNode::Unshared ShadowNode::cloneTree(
     const ShadowNodeFamily& shadowNodeFamily,
-    const std::function<ShadowNode::Unshared(ShadowNode const& oldShadowNode)>&
+    const std::function<ShadowNode::Unshared(const ShadowNode& oldShadowNode)>&
         callback,
     ShadowNodeTraits traits) const {
   auto ancestors = shadowNodeFamily.getAncestors(*this);

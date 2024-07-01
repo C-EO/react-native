@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<de8d2a8416c3ad914df01b765c8df907>>
+ * @generated SignedSource<<45258896e458cce165b403e043356eb9>>
  */
 
 /**
@@ -32,20 +32,29 @@ class ReactNativeFeatureFlagsAccessor {
   ReactNativeFeatureFlagsAccessor();
 
   bool commonTestFlag();
+  bool allowCollapsableChildren();
+  bool allowRecursiveCommitsWithSynchronousMountOnAndroid();
   bool batchRenderingUpdatesInEventLoop();
+  bool destroyFabricSurfacesInReactInstanceManager();
   bool enableBackgroundExecutor();
   bool enableCleanTextInputYogaNode();
-  bool enableCustomDrawOrderFabric();
+  bool enableGranularShadowTreeStateReconciliation();
   bool enableMicrotasks();
-  bool enableMountHooksAndroid();
-  bool enableSpannableBuildingUnification();
   bool enableSynchronousStateUpdates();
   bool enableUIConsistency();
+  bool fixMappingOfEventPrioritiesBetweenFabricAndReact();
+  bool fixStoppedSurfaceRemoveDeleteTreeUIFrameCallbackLeak();
   bool forceBatchingMountItemsOnAndroid();
-  bool inspectorEnableCxxInspectorPackagerConnection();
-  bool inspectorEnableModernCDPRegistry();
+  bool fuseboxEnabledDebug();
+  bool fuseboxEnabledRelease();
+  bool lazyAnimationCallbacks();
+  bool preventDoubleTextMeasure();
+  bool setAndroidLayoutDirection();
+  bool useImmediateExecutorInAndroidBridgeless();
   bool useModernRuntimeScheduler();
   bool useNativeViewConfigsInBridgelessMode();
+  bool useRuntimeShadowNodeReferenceUpdate();
+  bool useRuntimeShadowNodeReferenceUpdateOnLayout();
   bool useStateAlignmentMechanism();
 
   void override(std::unique_ptr<ReactNativeFeatureFlagsProvider> provider);
@@ -57,23 +66,32 @@ class ReactNativeFeatureFlagsAccessor {
   std::unique_ptr<ReactNativeFeatureFlagsProvider> currentProvider_;
   bool wasOverridden_;
 
-  std::array<std::atomic<const char*>, 16> accessedFeatureFlags_;
+  std::array<std::atomic<const char*>, 25> accessedFeatureFlags_;
 
   std::atomic<std::optional<bool>> commonTestFlag_;
+  std::atomic<std::optional<bool>> allowCollapsableChildren_;
+  std::atomic<std::optional<bool>> allowRecursiveCommitsWithSynchronousMountOnAndroid_;
   std::atomic<std::optional<bool>> batchRenderingUpdatesInEventLoop_;
+  std::atomic<std::optional<bool>> destroyFabricSurfacesInReactInstanceManager_;
   std::atomic<std::optional<bool>> enableBackgroundExecutor_;
   std::atomic<std::optional<bool>> enableCleanTextInputYogaNode_;
-  std::atomic<std::optional<bool>> enableCustomDrawOrderFabric_;
+  std::atomic<std::optional<bool>> enableGranularShadowTreeStateReconciliation_;
   std::atomic<std::optional<bool>> enableMicrotasks_;
-  std::atomic<std::optional<bool>> enableMountHooksAndroid_;
-  std::atomic<std::optional<bool>> enableSpannableBuildingUnification_;
   std::atomic<std::optional<bool>> enableSynchronousStateUpdates_;
   std::atomic<std::optional<bool>> enableUIConsistency_;
+  std::atomic<std::optional<bool>> fixMappingOfEventPrioritiesBetweenFabricAndReact_;
+  std::atomic<std::optional<bool>> fixStoppedSurfaceRemoveDeleteTreeUIFrameCallbackLeak_;
   std::atomic<std::optional<bool>> forceBatchingMountItemsOnAndroid_;
-  std::atomic<std::optional<bool>> inspectorEnableCxxInspectorPackagerConnection_;
-  std::atomic<std::optional<bool>> inspectorEnableModernCDPRegistry_;
+  std::atomic<std::optional<bool>> fuseboxEnabledDebug_;
+  std::atomic<std::optional<bool>> fuseboxEnabledRelease_;
+  std::atomic<std::optional<bool>> lazyAnimationCallbacks_;
+  std::atomic<std::optional<bool>> preventDoubleTextMeasure_;
+  std::atomic<std::optional<bool>> setAndroidLayoutDirection_;
+  std::atomic<std::optional<bool>> useImmediateExecutorInAndroidBridgeless_;
   std::atomic<std::optional<bool>> useModernRuntimeScheduler_;
   std::atomic<std::optional<bool>> useNativeViewConfigsInBridgelessMode_;
+  std::atomic<std::optional<bool>> useRuntimeShadowNodeReferenceUpdate_;
+  std::atomic<std::optional<bool>> useRuntimeShadowNodeReferenceUpdateOnLayout_;
   std::atomic<std::optional<bool>> useStateAlignmentMechanism_;
 };
 

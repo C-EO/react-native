@@ -295,7 +295,7 @@ static BackgroundExecutor RCTGetBackgroundExecutor()
   toolbox.asynchronousEventBeatFactory =
       [runtimeExecutor](const EventBeat::SharedOwnerBox &ownerBox) -> std::unique_ptr<EventBeat> {
     auto runLoopObserver =
-        std::make_unique<MainRunLoopObserver const>(RunLoopObserver::Activity::BeforeWaiting, ownerBox->owner);
+        std::make_unique<const MainRunLoopObserver>(RunLoopObserver::Activity::BeforeWaiting, ownerBox->owner);
     return std::make_unique<AsynchronousEventBeat>(std::move(runLoopObserver), runtimeExecutor);
   };
 
@@ -333,6 +333,11 @@ static BackgroundExecutor RCTGetBackgroundExecutor()
 #pragma mark - RCTSchedulerDelegate
 
 - (void)schedulerDidFinishTransaction:(MountingCoordinator::Shared)mountingCoordinator
+{
+  // no-op, we will flush the transaction from schedulerShouldRenderTransactions
+}
+
+- (void)schedulerShouldRenderTransactions:(MountingCoordinator::Shared)mountingCoordinator
 {
   [_mountingManager scheduleTransaction:mountingCoordinator];
 }

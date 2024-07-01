@@ -22,6 +22,8 @@ class ReactInstanceManagerInspectorTarget
         "Lcom/facebook/react/bridge/ReactInstanceManagerInspectorTarget$TargetDelegate;";
 
     void onReload() const;
+    void onSetPausedInDebuggerMessage(
+        const OverlaySetPausedInDebuggerMessageRequest& request) const;
   };
 
  public:
@@ -37,29 +39,35 @@ class ReactInstanceManagerInspectorTarget
 
   static jni::local_ref<jhybriddata> initHybrid(
       jni::alias_ref<jhybridobject> jobj,
-      jni::alias_ref<JExecutor::javaobject> executor,
+      jni::alias_ref<JExecutor::javaobject> javaExecutor,
       jni::alias_ref<
           ReactInstanceManagerInspectorTarget::TargetDelegate::javaobject>
           delegate);
 
+  void sendDebuggerResumeCommand();
+
   static void registerNatives();
 
-  void onReload(const PageReloadRequest& request) override;
   jsinspector_modern::HostTarget* getInspectorTarget();
+
+  // HostTargetDelegate methods
+  jsinspector_modern::HostTargetMetadata getMetadata() override;
+  void onReload(const PageReloadRequest& request) override;
+  void onSetPausedInDebuggerMessage(
+      const OverlaySetPausedInDebuggerMessageRequest&) override;
 
  private:
   friend HybridBase;
 
   ReactInstanceManagerInspectorTarget(
       jni::alias_ref<ReactInstanceManagerInspectorTarget::jhybridobject> jobj,
-      jni::alias_ref<JExecutor::javaobject> executor,
-      jni::alias_ref<
-          ReactInstanceManagerInspectorTarget::TargetDelegate::javaobject>
+      jni::alias_ref<JExecutor::javaobject> javaExecutor,
+      jni::alias_ref<ReactInstanceManagerInspectorTarget::TargetDelegate>
           delegate);
 
-  jni::global_ref<
-      ReactInstanceManagerInspectorTarget::TargetDelegate::javaobject>
+  jni::global_ref<ReactInstanceManagerInspectorTarget::TargetDelegate>
       delegate_;
+  jsinspector_modern::VoidExecutor inspectorExecutor_;
   std::shared_ptr<jsinspector_modern::HostTarget> inspectorTarget_;
   std::optional<int> inspectorPageId_;
 };

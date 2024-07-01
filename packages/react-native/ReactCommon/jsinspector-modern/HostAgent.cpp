@@ -15,6 +15,8 @@
 
 #include <chrono>
 
+#include <reactperflogger/fusebox/FuseboxTracer.h>
+
 using namespace std::chrono;
 using namespace std::literals::string_view_literals;
 
@@ -22,17 +24,16 @@ namespace facebook::react::jsinspector_modern {
 
 #define ANSI_WEIGHT_BOLD "\x1B[1m"
 #define ANSI_WEIGHT_RESET "\x1B[22m"
-#define ANSI_COLOR_BG_YELLOW "\x1B[48;2;253;247;231m"
-#define CSS_STYLE_PLACEHOLDER "%c"
+#define ANSI_COLOR_BG_YELLOW "\x1B[48;2;253;247;231m\x1B[30m"
 
 HostAgent::HostAgent(
     FrontendChannel frontendChannel,
     HostTargetController& targetController,
-    HostTarget::SessionMetadata sessionMetadata,
+    HostTargetMetadata hostMetadata,
     SessionState& sessionState)
     : frontendChannel_(frontendChannel),
       targetController_(targetController),
-      sessionMetadata_(std::move(sessionMetadata)),
+      hostMetadata_(std::move(hostMetadata)),
       sessionState_(sessionState) {}
 
 void HostAgent::handleRequest(const cdp::PreparsedRequest& req) {
@@ -50,10 +51,10 @@ void HostAgent::handleRequest(const cdp::PreparsedRequest& req) {
     }
 
     // Send a log entry with the integration name.
-    if (sessionMetadata_.integrationName) {
+    if (hostMetadata_.integrationName) {
       sendInfoLogEntry(
           ANSI_COLOR_BG_YELLOW "Debugger integration: " +
-          *sessionMetadata_.integrationName);
+          *hostMetadata_.integrationName);
     }
 
     shouldSendOKResponse = true;
@@ -107,6 +108,22 @@ void HostAgent::handleRequest(const cdp::PreparsedRequest& req) {
 
     shouldSendOKResponse = true;
     isFinishedHandlingRequest = true;
+  } else if (req.method == "Overlay.setPausedInDebuggerMessage") {
+    auto message = req.params.isObject() && req.params.count("message")
+        ? std::optional(req.params.at("message").asString())
+        : std::nullopt;
+    if (!isPausedInDebuggerOverlayVisible_ && message.has_value()) {
+      targetController_.incrementPauseOverlayCounter();
+    } else if (isPausedInDebuggerOverlayVisible_ && !message.has_value()) {
+      targetController_.decrementPauseOverlayCounter();
+    }
+    isPausedInDebuggerOverlayVisible_ = message.has_value();
+    targetController_.getDelegate().onSetPausedInDebuggerMessage({
+        .message = message,
+    });
+
+    shouldSendOKResponse = true;
+    isFinishedHandlingRequest = true;
   } else if (req.method == "FuseboxClient.setClientMetadata") {
     fuseboxClientType_ = FuseboxClientType::Fusebox;
 
@@ -116,26 +133,56 @@ void HostAgent::handleRequest(const cdp::PreparsedRequest& req) {
 
     shouldSendOKResponse = true;
     isFinishedHandlingRequest = true;
-  } else if (req.method == "Tracing.start") {
-    // @cdp Tracing.start is implemented as a stub only.
+  } else if (req.method == "ReactNativeApplication.enable") {
+    sessionState_.isReactNativeApplicationDomainEnabled = true;
+
     frontendChannel_(cdp::jsonNotification(
-        // @cdp Tracing.bufferUsage is implemented as a stub only.
-        "Tracing.bufferUsage",
-        folly::dynamic::object("percentFull", 0)("eventCount", 0)("value", 0)));
+        "ReactNativeApplication.metadataUpdated",
+        hostMetadataToDynamic(hostMetadata_)));
+
     shouldSendOKResponse = true;
+    isFinishedHandlingRequest = true;
+  } else if (req.method == "ReactNativeApplication.disable") {
+    sessionState_.isReactNativeApplicationDomainEnabled = false;
+
+    shouldSendOKResponse = true;
+    isFinishedHandlingRequest = true;
+  } else if (req.method == "Tracing.start") {
+    // @cdp Tracing.start support is experimental.
+    if (FuseboxTracer::getFuseboxTracer().startTracing()) {
+      shouldSendOKResponse = true;
+    } else {
+      frontendChannel_(cdp::jsonError(
+          req.id,
+          cdp::ErrorCode::InternalError,
+          "Tracing session already started"));
+      return;
+    }
     isFinishedHandlingRequest = true;
   } else if (req.method == "Tracing.end") {
-    // @cdp Tracing.end is implemented as a stub only.
+    // @cdp Tracing.end support is experimental.
+    bool firstChunk = true;
+    auto id = req.id;
+    bool wasStopped = FuseboxTracer::getFuseboxTracer().stopTracing(
+        [this, firstChunk, id](const folly::dynamic& eventsChunk) {
+          if (firstChunk) {
+            frontendChannel_(cdp::jsonResult(id));
+          }
+          frontendChannel_(cdp::jsonNotification(
+              "Tracing.dataCollected",
+              folly::dynamic::object("value", eventsChunk)));
+        });
+    if (!wasStopped) {
+      frontendChannel_(cdp::jsonError(
+          req.id,
+          cdp::ErrorCode::InternalError,
+          "Tracing session not started"));
+      return;
+    }
     frontendChannel_(cdp::jsonNotification(
-        // @cdp Tracing.dataCollected is implemented as a stub only.
-        "Tracing.dataCollected",
-        folly::dynamic::object("value", folly::dynamic::array())));
-    frontendChannel_(cdp::jsonNotification(
-        // @cdp Tracing.tracingComplete is implemented as a stub only.
         "Tracing.tracingComplete",
         folly::dynamic::object("dataLossOccurred", false)));
-    shouldSendOKResponse = true;
-    isFinishedHandlingRequest = true;
+    return;
   }
 
   if (!isFinishedHandlingRequest && instanceAgent_ &&
@@ -154,14 +201,26 @@ void HostAgent::handleRequest(const cdp::PreparsedRequest& req) {
       req.method + " not implemented yet"));
 }
 
+HostAgent::~HostAgent() {
+  if (isPausedInDebuggerOverlayVisible_) {
+    // In case of a non-graceful shutdown of the session, ensure we clean up
+    // the "paused on debugger" overlay if we've previously asked the
+    // integrator to display it.
+    isPausedInDebuggerOverlayVisible_ = false;
+    if (!targetController_.decrementPauseOverlayCounter()) {
+      targetController_.getDelegate().onSetPausedInDebuggerMessage({
+          .message = std::nullopt,
+      });
+    }
+  }
+}
+
 void HostAgent::sendFuseboxNotice() {
   static constexpr auto kFuseboxNotice = ANSI_COLOR_BG_YELLOW
-      "Welcome to the new React Native debugger (codename " ANSI_WEIGHT_BOLD
-      "React Fusebox " CSS_STYLE_PLACEHOLDER
-      "⚡️" CSS_STYLE_PLACEHOLDER ANSI_WEIGHT_RESET ")."sv;
+      "Welcome to " ANSI_WEIGHT_BOLD "React Native DevTools" ANSI_WEIGHT_RESET
+      " (experimental)"sv;
 
-  sendInfoLogEntry(
-      kFuseboxNotice, {"font-family: sans-serif;", "font-family: monospace;"});
+  sendInfoLogEntry(kFuseboxNotice);
 }
 
 void HostAgent::sendNonFuseboxNotice() {
@@ -191,8 +250,8 @@ void HostAgent::sendInfoLogEntry(
               "timestamp",
               duration_cast<milliseconds>(
                   system_clock::now().time_since_epoch())
-                  .count())("source", "other")(
-              "level", "info")("text", text)("args", std::move(argsArray)))));
+                  .count())("source", "other")("level", "info")("text", text)(
+              "args", std::move(argsArray)))));
 }
 
 void HostAgent::setCurrentInstanceAgent(

@@ -29,7 +29,8 @@ class ParagraphShadowNode final : public ConcreteViewShadowNode<
                                       ParagraphComponentName,
                                       ParagraphProps,
                                       ParagraphEventEmitter,
-                                      ParagraphState>,
+                                      ParagraphState,
+                                      /* usesMapBufferForStateData */ true>,
                                   public BaseTextShadowNode {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
@@ -63,6 +64,7 @@ class ParagraphShadowNode final : public ConcreteViewShadowNode<
 #pragma mark - LayoutableShadowNode
 
   void layout(LayoutContext layoutContext) override;
+
   Size measureContent(
       const LayoutContext& layoutContext,
       const LayoutConstraints& layoutConstraints) const override;
@@ -97,7 +99,7 @@ class ParagraphShadowNode final : public ConcreteViewShadowNode<
    */
   void updateStateIfNeeded(const Content& content);
 
-  std::shared_ptr<TextLayoutManager const> textLayoutManager_;
+  std::shared_ptr<const TextLayoutManager> textLayoutManager_;
 
   /*
    * Cached content of the subtree started from the node.

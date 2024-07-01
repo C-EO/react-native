@@ -58,17 +58,15 @@ public interface DevSupportManager : JSExceptionHandler {
 
   public fun stopInspector()
 
-  public fun onNewReactContextCreated(reactContext: ReactContext?)
+  public fun onNewReactContextCreated(reactContext: ReactContext)
 
-  public fun onReactInstanceDestroyed(reactContext: ReactContext?)
+  public fun onReactInstanceDestroyed(reactContext: ReactContext)
 
   public fun hasUpToDateJSBundleInCache(): Boolean
 
   public fun reloadSettings()
 
   public fun handleReloadJS()
-
-  public fun reloadJSFromServer(bundleURL: String)
 
   public fun reloadJSFromServer(bundleURL: String, callback: BundleLoadCallback)
 
@@ -105,6 +103,15 @@ public interface DevSupportManager : JSExceptionHandler {
   /** Attempt to open the JS debugger on the host machine. */
   public fun openDebugger()
 
+  /** Shows the "paused in debugger" overlay with the given message. */
+  public fun showPausedInDebuggerOverlay(
+      message: String,
+      listener: PausedInDebuggerOverlayCommandListener
+  )
+
+  /** Hides the "paused in debugger" overlay, if currently shown. */
+  public fun hidePausedInDebuggerOverlay()
+
   /**
    * The PackagerLocationCustomizer allows you to have a dynamic packager location that is
    * determined right before loading the packager. Your customizer must call |callback|, as loading
@@ -112,5 +119,9 @@ public interface DevSupportManager : JSExceptionHandler {
    */
   public fun interface PackagerLocationCustomizer {
     public fun run(callback: Runnable?)
+  }
+
+  public interface PausedInDebuggerOverlayCommandListener {
+    public fun onResume()
   }
 }

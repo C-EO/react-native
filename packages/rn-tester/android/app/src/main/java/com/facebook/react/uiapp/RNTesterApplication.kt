@@ -21,10 +21,12 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.config.ReactFeatureFlags
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.unstable_loadFusebox
 import com.facebook.react.defaults.DefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
+import com.facebook.react.osslibraryexample.OSSLibraryExamplePackage
 import com.facebook.react.popupmenu.PopupMenuPackage
 import com.facebook.react.shell.MainReactPackage
 import com.facebook.react.uiapp.component.MyLegacyViewManager
@@ -32,7 +34,6 @@ import com.facebook.react.uiapp.component.MyNativeViewManager
 import com.facebook.react.uimanager.ReactShadowNode
 import com.facebook.react.uimanager.ViewManager
 import com.facebook.soloader.SoLoader
-import com.reactnative.osslibraryexample.OSSLibraryExamplePackage
 
 class RNTesterApplication : Application(), ReactApplication {
   override val reactNativeHost: ReactNativeHost by lazy {
@@ -136,6 +137,10 @@ class RNTesterApplication : Application(), ReactApplication {
     ReactFontManager.getInstance().addCustomFont(this, "Rubik", R.font.rubik)
     super.onCreate()
     SoLoader.init(this, /* native exopackage */ false)
+
+    // [Experiment] Enable the new debugger stack (codename Fusebox)
+    unstable_loadFusebox(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED)
+
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       load()
     }
