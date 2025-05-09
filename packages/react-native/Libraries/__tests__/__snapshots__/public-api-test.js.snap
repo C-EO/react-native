@@ -3843,7 +3843,27 @@ declare export default function getDevServer(): DevServerInfo;
 `;
 
 exports[`public API should not change unintentionally Libraries/Core/Devtools/loadBundleFromServer.js 1`] = `
-"declare export default function loadBundleFromServer(
+"declare export class LoadBundleFromServerError extends Error {
+  url: string;
+  isTimeout: boolean;
+  constructor(
+    message: string,
+    url: string,
+    isTimeout: boolean,
+    options?: { cause: mixed, ... }
+  ): void;
+}
+declare export class LoadBundleFromServerRequestError
+  extends LoadBundleFromServerError
+{
+  constructor(
+    message: string,
+    url: string,
+    isTimeout: boolean,
+    options?: { cause: mixed, ... }
+  ): void;
+}
+declare export default function loadBundleFromServer(
   bundlePathAndQuery: string
 ): Promise<void>;
 "
@@ -9351,6 +9371,13 @@ export type {
 
 exports[`public API should not change unintentionally src/private/setup/setUpDOM.js 1`] = `
 "declare export default function setUpDOM(): void;
+"
+`;
+
+exports[`public API should not change unintentionally src/private/setup/setUpDefaultReactNativeEnvironment.js 1`] = `
+"declare export default function setUpDefaltReactNativeEnvironment(
+  enableDeveloperTools?: boolean
+): void;
 "
 `;
 
