@@ -64,9 +64,10 @@ module.exports = {
       },
     },
     {
-      files: ['flow-typed/**/*.js'],
+      files: ['flow-typed/**/*.js', 'packages/react-native/flow/**/*'],
       rules: {
         'lint/valid-flow-typed-signature': 2,
+        'no-shadow': 0,
         'no-unused-vars': 0,
         quotes: 0,
       },

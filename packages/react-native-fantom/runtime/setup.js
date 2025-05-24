@@ -6,7 +6,6 @@
  *
  * @flow strict-local
  * @format
- * @oncall react_native
  */
 
 import type {SnapshotConfig, TestSnapshotResults} from './snapshotContext';
@@ -321,7 +320,7 @@ function runSpec(spec: Spec): TestCaseResult {
     return result;
   }
 
-  let status;
+  let status: 'passed' | 'failed' | 'pending';
   let error;
 
   const start = Date.now();

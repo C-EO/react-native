@@ -4,15 +4,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
  * @flow strict-local
+ * @format
  */
 
 'use strict';
 
 import SectionListBaseExample from './SectionListBaseExample';
-import {useState} from 'react';
 import * as React from 'react';
+import {useState} from 'react';
 
 export function SectionList_inverted(): React.Node {
   const [output, setOutput] = useState('inverted false');

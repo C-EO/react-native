@@ -11,6 +11,7 @@
 #include <react/renderer/core/EventLogger.h>
 #include <react/renderer/runtimescheduler/RuntimeSchedulerEventTimingDelegate.h>
 #include <react/renderer/uimanager/UIManagerMountHook.h>
+
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -31,7 +32,7 @@ class EventPerformanceLogger : public EventLogger,
   EventTag onEventStart(
       std::string_view name,
       SharedEventTarget target,
-      std::optional<DOMHighResTimeStamp> eventStartTimeStamp =
+      std::optional<HighResTimeStamp> eventStartTimeStamp =
           std::nullopt) override;
   void onEventProcessingStart(EventTag tag) override;
   void onEventProcessingEnd(EventTag tag) override;
@@ -46,15 +47,15 @@ class EventPerformanceLogger : public EventLogger,
 
   void shadowTreeDidMount(
       const RootShadowNode::Shared& rootShadowNode,
-      double mountTime) noexcept override;
+      HighResTimeStamp mountTime) noexcept override;
 
  private:
   struct EventEntry {
     std::string_view name;
     SharedEventTarget target{nullptr};
-    DOMHighResTimeStamp startTime{0.0};
-    DOMHighResTimeStamp processingStartTime{0.0};
-    DOMHighResTimeStamp processingEndTime{0.0};
+    HighResTimeStamp startTime;
+    std::optional<HighResTimeStamp> processingStartTime;
+    std::optional<HighResTimeStamp> processingEndTime;
 
     bool isWaitingForMount{false};
 
@@ -63,7 +64,7 @@ class EventPerformanceLogger : public EventLogger,
     PerformanceEntryInteractionId interactionId{0};
 
     bool isWaitingForDispatch() {
-      return processingEndTime == 0.0;
+      return !processingEndTime.has_value();
     }
   };
 

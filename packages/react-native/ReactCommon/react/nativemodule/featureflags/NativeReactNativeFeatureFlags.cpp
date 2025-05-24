@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<3c85cdc2dc3d2368d09a5c0aff4d083a>>
+ * @generated SignedSource<<167e35bd99451cbe24a2bb54db5c66b9>>
  */
 
 /**
@@ -134,9 +134,19 @@ bool NativeReactNativeFeatureFlags::enableFontScaleChangesUpdatingLayout(
   return ReactNativeFeatureFlags::enableFontScaleChangesUpdatingLayout();
 }
 
+bool NativeReactNativeFeatureFlags::enableIOSTextBaselineOffsetPerLine(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::enableIOSTextBaselineOffsetPerLine();
+}
+
 bool NativeReactNativeFeatureFlags::enableIOSViewClipToPaddingBox(
     jsi::Runtime& /*runtime*/) {
   return ReactNativeFeatureFlags::enableIOSViewClipToPaddingBox();
+}
+
+bool NativeReactNativeFeatureFlags::enableIntersectionObserverEventLoopIntegration(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::enableIntersectionObserverEventLoopIntegration();
 }
 
 bool NativeReactNativeFeatureFlags::enableLayoutAnimationsOnAndroid(
@@ -152,6 +162,11 @@ bool NativeReactNativeFeatureFlags::enableLayoutAnimationsOnIOS(
 bool NativeReactNativeFeatureFlags::enableMainQueueModulesOnIOS(
     jsi::Runtime& /*runtime*/) {
   return ReactNativeFeatureFlags::enableMainQueueModulesOnIOS();
+}
+
+bool NativeReactNativeFeatureFlags::enableModuleArgumentNSNullConversionIOS(
+    jsi::Runtime& /*runtime*/) {
+  return ReactNativeFeatureFlags::enableModuleArgumentNSNullConversionIOS();
 }
 
 bool NativeReactNativeFeatureFlags::enableNativeCSSParsing(

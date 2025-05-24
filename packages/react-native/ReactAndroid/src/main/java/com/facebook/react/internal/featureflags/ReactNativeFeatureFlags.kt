@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<e9a109fd77667dd0cb945ef6ef9737f2>>
+ * @generated SignedSource<<a5552614b746c732adb88a6640a7951a>>
  */
 
 /**
@@ -139,10 +139,22 @@ public object ReactNativeFeatureFlags {
   public fun enableFontScaleChangesUpdatingLayout(): Boolean = accessor.enableFontScaleChangesUpdatingLayout()
 
   /**
+   * Applies base offset for each line of text separately on iOS.
+   */
+  @JvmStatic
+  public fun enableIOSTextBaselineOffsetPerLine(): Boolean = accessor.enableIOSTextBaselineOffsetPerLine()
+
+  /**
    * iOS Views will clip to their padding box vs border box
    */
   @JvmStatic
   public fun enableIOSViewClipToPaddingBox(): Boolean = accessor.enableIOSViewClipToPaddingBox()
+
+  /**
+   * Integrates IntersectionObserver in the Event Loop in the new architecture, to dispatch the initial notifications for observations in the "Update the rendering" step.
+   */
+  @JvmStatic
+  public fun enableIntersectionObserverEventLoopIntegration(): Boolean = accessor.enableIntersectionObserverEventLoopIntegration()
 
   /**
    * When enabled, LayoutAnimations API will animate state changes on Android.
@@ -161,6 +173,12 @@ public object ReactNativeFeatureFlags {
    */
   @JvmStatic
   public fun enableMainQueueModulesOnIOS(): Boolean = accessor.enableMainQueueModulesOnIOS()
+
+  /**
+   * Enable NSNull conversion when handling module arguments on iOS
+   */
+  @JvmStatic
+  public fun enableModuleArgumentNSNullConversionIOS(): Boolean = accessor.enableModuleArgumentNSNullConversionIOS()
 
   /**
    * Parse CSS strings using the Fabric CSS parser instead of ViewConfig processing

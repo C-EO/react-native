@@ -11,23 +11,6 @@
 
 namespace facebook::react {
 
-// `DOMHighResTimeStamp` represents a time value in milliseconds (time point or
-// duration), with sub-millisecond precision.
-// On the Web, the precision can be reduced for security purposes, but that is
-// not necessary in React Native.
-using DOMHighResTimeStamp = double;
-
-inline DOMHighResTimeStamp chronoToDOMHighResTimeStamp(
-    std::chrono::steady_clock::duration duration) {
-  return static_cast<std::chrono::duration<double, std::milli>>(duration)
-      .count();
-}
-
-inline DOMHighResTimeStamp chronoToDOMHighResTimeStamp(
-    std::chrono::steady_clock::time_point timePoint) {
-  return chronoToDOMHighResTimeStamp(timePoint.time_since_epoch());
-}
-
 class HighResDuration;
 class HighResTimeStamp;
 
@@ -236,6 +219,20 @@ class HighResTimeStamp {
   constexpr double toDOMHighResTimeStamp() const {
     return HighResDuration(chronoTimePoint_.time_since_epoch())
         .toDOMHighResTimeStamp();
+  }
+
+  // This method is expected to be used only when converting time stamps from
+  // external systems.
+  static constexpr HighResTimeStamp fromChronoSteadyClockTimePoint(
+      std::chrono::steady_clock::time_point chronoTimePoint) {
+    return HighResTimeStamp(chronoTimePoint);
+  }
+
+  // This method is provided for convenience, if you need to convert
+  // HighResTimeStamp to some common epoch with time stamps from other sources.
+  constexpr std::chrono::steady_clock::time_point toChronoSteadyClockTimePoint()
+      const {
+    return chronoTimePoint_;
   }
 
   constexpr bool operator==(const HighResTimeStamp& rhs) const {

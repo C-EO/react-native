@@ -6,7 +6,6 @@
  *
  * @flow strict-local
  * @format
- * @oncall react_native
  */
 
 import type {RNTesterModuleExample} from '../../types/RNTesterTypes';
@@ -132,7 +131,7 @@ const mixBlendModes = [
   'saturation',
   'color',
   'luminosity',
-];
+] as const;
 
 const examples: Array<RNTesterModuleExample> = mixBlendModes.map(mode => ({
   title: mode,

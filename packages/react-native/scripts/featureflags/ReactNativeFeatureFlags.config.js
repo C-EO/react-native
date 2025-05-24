@@ -237,11 +237,33 @@ const definitions: FeatureFlagDefinitions = {
       },
       ossReleaseStage: 'none',
     },
+    enableIOSTextBaselineOffsetPerLine: {
+      defaultValue: false,
+      metadata: {
+        dateAdded: '2025-05-21',
+        description:
+          'Applies base offset for each line of text separately on iOS.',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
     enableIOSViewClipToPaddingBox: {
       defaultValue: false,
       metadata: {
         dateAdded: '2024-08-30',
         description: 'iOS Views will clip to their padding box vs border box',
+        expectedReleaseValue: true,
+        purpose: 'experimentation',
+      },
+      ossReleaseStage: 'none',
+    },
+    enableIntersectionObserverEventLoopIntegration: {
+      defaultValue: true,
+      metadata: {
+        dateAdded: '2025-04-16',
+        description:
+          'Integrates IntersectionObserver in the Event Loop in the new architecture, to dispatch the initial notifications for observations in the "Update the rendering" step.',
         expectedReleaseValue: true,
         purpose: 'experimentation',
       },
@@ -272,6 +294,16 @@ const definitions: FeatureFlagDefinitions = {
       metadata: {
         description:
           'Makes modules requiring main queue setup initialize on the main thread, during React Native init.',
+        expectedReleaseValue: true,
+        purpose: 'release',
+      },
+      ossReleaseStage: 'none',
+    },
+    enableModuleArgumentNSNullConversionIOS: {
+      defaultValue: false,
+      metadata: {
+        description:
+          'Enable NSNull conversion when handling module arguments on iOS',
         expectedReleaseValue: true,
         purpose: 'release',
       },
@@ -618,17 +650,6 @@ const definitions: FeatureFlagDefinitions = {
           'Enables VirtualView debug features such as logging and overlays.',
         expectedReleaseValue: false,
         purpose: 'operational',
-      },
-      ossReleaseStage: 'none',
-    },
-    enableVirtualViewDoubleStateHidden: {
-      defaultValue: false,
-      metadata: {
-        dateAdded: '2025-05-10',
-        description:
-          'Enables a VirtualView workaround that triggers a second state update when changing to hidden mode.',
-        expectedReleaseValue: false,
-        purpose: 'experimentation',
       },
       ossReleaseStage: 'none',
     },

@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @generated SignedSource<<88fdbea2f97f628187164a47a9737da0>>
+ * @generated SignedSource<<c099ce4bba5f6d14a83ad69a0fb3cbbf>>
  */
 
 /**
@@ -98,8 +98,16 @@ bool ReactNativeFeatureFlags::enableFontScaleChangesUpdatingLayout() {
   return getAccessor().enableFontScaleChangesUpdatingLayout();
 }
 
+bool ReactNativeFeatureFlags::enableIOSTextBaselineOffsetPerLine() {
+  return getAccessor().enableIOSTextBaselineOffsetPerLine();
+}
+
 bool ReactNativeFeatureFlags::enableIOSViewClipToPaddingBox() {
   return getAccessor().enableIOSViewClipToPaddingBox();
+}
+
+bool ReactNativeFeatureFlags::enableIntersectionObserverEventLoopIntegration() {
+  return getAccessor().enableIntersectionObserverEventLoopIntegration();
 }
 
 bool ReactNativeFeatureFlags::enableLayoutAnimationsOnAndroid() {
@@ -112,6 +120,10 @@ bool ReactNativeFeatureFlags::enableLayoutAnimationsOnIOS() {
 
 bool ReactNativeFeatureFlags::enableMainQueueModulesOnIOS() {
   return getAccessor().enableMainQueueModulesOnIOS();
+}
+
+bool ReactNativeFeatureFlags::enableModuleArgumentNSNullConversionIOS() {
+  return getAccessor().enableModuleArgumentNSNullConversionIOS();
 }
 
 bool ReactNativeFeatureFlags::enableNativeCSSParsing() {
